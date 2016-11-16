@@ -1,0 +1,47 @@
+1. Make scrollable field
+            - Able to set pitch dimensions (multiple of 2)				                # done
+            - Not able to scroll past pitch dimensions                                  # not done
+            - Camera tracks objects                                                     # done
+                        - Need to track middle of objects                               # dont need
+            - 'Hard' ground with collisions                                             # not done
+            - Able to set different backgrounds                                         # done
+                        - Blit background depending on where screen is                  # done
+                        * Animated background                                           # not done
+            - Floating goals                                                            # not done
+                        - Three goals each end                                          # not done
+                        - Spaced apart for independent aiming of shots                  # not done
+
+2. Base Player Class
+            - Stays in place if inactive                                                # done
+                        * Hover animation                                               # not done
+            - Can move in all directions                                                # done
+                        - Use direction keys                                            # done
+                        - Uses vectors to control movement                              # done
+                        - Use steering behaviours                                       # done
+                        - Always points in direction of heading                         # done
+                                    - Sprite rotates to heading angle                   # done
+
+            - User able to control any player                                           # done
+            - All Players belong to a team (pygame group)                               # not done
+            * Each player has foul count
+            * Player has skill ratings
+                        - Att (controls shooting, stealing)
+                        - Def (controls blocking, retaining)
+                        - Control (controls passing, receiving)
+                        - Speed (defined by type of broom)
+                        - Aggression (controls fouls)
+                        - Health (with healthbar)
+                        - Each player should have skillCheck method
+                                    - player.skillCheck('attack')
+            * Ability to perform spells (illegal)
+                        - All spells if seen by ref are foul
+                        - Confundus (lowers att and def and control)
+                        - Impedimenta (lowers speed)
+                        - Stupefy (lowers health)
+
+3. Chaser class (Inherits from BasePlayer)
+            - Possession variable for quaffle
+            - Unique methods
+                        - Pass (pass quaffle
+                        - Shoot
+                        - Snatch quaffle

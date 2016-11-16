@@ -1,0 +1,131 @@
+import pygame
+import SteeringManager
+import functions
+import constants as const
+from Vector import Vec2d
+
+
+class BasePlayer(pygame.sprite.Sprite):
+    def __init__(self, game):
+        pygame.sprite.Sprite.__init__(self)
+        self.steerMngr = SteeringManager.SteeringManager(game, self)
+
+        self.game = game
+        self.position = Vec2d(100, 100)
+        self.velocity = Vec2d(0, 0)
+        self.new_velocity = Vec2d(0, 0)
+
+        # determines if this is controlled by user or AI
+        self.controller = const.CONTROL_AI
+
+        # start_image as a starting point for rotation
+        self.start_image = pygame.image.load("./gfx/player.png").convert_alpha()
+        self.image = self.start_image
+
+        # used to show which way self.image is pointing
+        self.pointing = -1
+
+        self.max_see_ahead = 50
+        self.max_avoid_force = 5
+
+        # should be overwritten by inherited classes
+        self.max_force = 5
+        self.max_velocity = 20
+        self.acceleration = 0
+        self.mass = 5
+
+    def changeHeading(self, direction):
+        if direction == "left":
+            vec = Vec2d(-1, 0)
+            self.acceleration += 0.4
+        elif direction == "right":
+            vec = Vec2d(1, 0)
+            self.acceleration += 0.4
+        elif direction == "up":
+            vec = Vec2d(0, -1)
+            self.acceleration += 0.1
+        elif direction == "down":
+            vec = Vec2d(0, 1)
+            self.acceleration += 0.2
+
+        if (vec.x < 0 and self.pointing == 1):
+            if self.acceleration > 0:
+                self.acceleration = self.acceleration - 0.2
+            elif self.acceleration < 0:
+                self.acceleration = 0
+        elif (vec.x > 0 and self.pointing == -1):
+            if self.acceleration > 0:
+                self.acceleration = self.acceleration - 0.2
+            elif self.acceleration < 0:
+                self.acceleration = 0
+
+        self.velocity += vec
+
+    def rotateToHeading(self):
+        if self.velocity.x >= 0:
+            self.pointing = 1
+        else:
+            self.pointing = -1
+
+        angle = self.velocity.get_angle()
+        if self.pointing == 1:
+            temp_image = pygame.transform.flip(self.start_image, 1, 0)
+            angle *= -1
+            temp_image = pygame.transform.rotate(temp_image, angle)
+        else:
+            temp_image = self.start_image
+            if (angle < 180):
+                angle = 180 - angle
+                temp_image = pygame.transform.rotate(temp_image, angle)
+
+        self.image = temp_image
+
+    def update(self):
+        self.rotateToHeading()
+        self.checkCollisions()
+
+        # this will run if controlled by AI
+        if self.controller == const.CONTROL_AI:
+            self.steerMngr.seek(Vec2d(4000, 800), 100)
+            self.steerMngr.update()
+
+        if self.controller == const.CONTROL_USER:
+            self.position += functions.truncate((self.velocity.normalized() *
+                                                self.acceleration),
+                                                self.max_velocity)
+
+            # slow down acceleration and make sure it isn't < 0
+            if self.acceleration > 0:
+                self.acceleration = self.acceleration - 0.1
+            elif self.acceleration < 0:
+                self.acceleration = 0
+
+    def _inBounds(self):
+        # if x position is more than 0
+        if (self.position.x <= 0):
+            self.position.x = 1
+            self.reset()
+        if (self.position.x + self.start_image.get_width() >= (const.MAP_WIDTH)):
+            self.position.x = const.MAP_WIDTH - self.start_image.get_width() - 1
+            self.reset()
+        if (self.position.y <= 0):
+            self.position.y = 1
+            self.reset()
+        if (self.position.y + self.start_image.get_height() >= (const.MAP_HEIGHT - const.GRND_BLOCK_H)):
+            self.position.y = const.MAP_HEIGHT - const.GRND_BLOCK_H - self.start_image.get_height() - 1
+            self.reset()
+
+    def checkCollisions(self):
+        self._inBounds()
+
+    def reset(self):
+        ''' resets velocity and acceleration to 0 '''
+        self.velocity = Vec2d(0, 0)
+        self.acceleration = 0
+
+    def draw(self):
+        if self.game.camera.onScreen(self):
+            local_x = self.position.x - self.game.camera.x
+            local_y = self.position.y - self.game.camera.y
+            self.game.screen.blit(self.image,
+                                  (local_x, local_y))
