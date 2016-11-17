@@ -50,12 +50,12 @@ class BasePlayer(pygame.sprite.Sprite):
 
         if (vec.x < 0 and self.pointing == 1):
             if self.acceleration > 0:
-                self.acceleration = self.acceleration - 0.2
+                self.acceleration = self.acceleration - 0.4
             elif self.acceleration < 0:
                 self.acceleration = 0
         elif (vec.x > 0 and self.pointing == -1):
             if self.acceleration > 0:
-                self.acceleration = self.acceleration - 0.2
+                self.acceleration = self.acceleration - 0.4
             elif self.acceleration < 0:
                 self.acceleration = 0
 

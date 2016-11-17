@@ -31,6 +31,9 @@ def eventHandler(player):
                 pygame.quit()
                 sys.exit()
 
+            if event.key == local.K_x:
+                print player.position
+
 
 def onMap(sprite):
     bool_x = (sprite.position.x >= 0 and sprite.position.x + sprite.image.get_width() <= (const.MAP_WIDTH))
