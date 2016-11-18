@@ -12,6 +12,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.fps = 60
 
+        self.player_team = pygame.sprite.Group()
+        self.opposition_team = pygame.sprite.Group()
+        self.all_players = pygame.sprite.Group()
+
 
 class Camera:
     def __init__(self):
@@ -45,10 +49,34 @@ class Camera:
                 self.y = const.MAP_HEIGHT - const.SCREEN_HEIGHT
 
 
+class FSM:
+    def __init__(self, parent):
+        self.parent = parent
+        self.stateStack = []
+
+    def pop(self):
+        return self.stateStack.pop()
+
+    def push(self, state):
+        self.stateStack.append(state)
+
+    def update(self):
+        current = self.stateStack[len(self.stateStack) - 1]
+        current()
+
+
 class Background:
     def __init__(self, game):
         self.game = game
         self.main_image = pygame.image.load("./gfx/bg.png").convert_alpha()
+        self.make()
+
+    def make(self):
+        image = pygame.Surface([const.MAP_WIDTH, const.MAP_HEIGHT])
+        image.fill(local.Color(192, 239, 247))
+        image.blit(self.main_image,
+                   (0, const.MAP_HEIGHT - self.main_image.get_height()))
+        self.main_image = image
 
     def draw(self):
         drawRect = local.Rect(self.game.camera.x,

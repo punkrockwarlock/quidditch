@@ -1,7 +1,9 @@
 import pygame
+import pygame.locals as local
 import SteeringManager
 import functions
 import constants as const
+import classes
 from Vector import Vec2d
 
 
@@ -21,6 +23,10 @@ class BasePlayer(pygame.sprite.Sprite):
         # start_image as a starting point for rotation
         self.start_image = pygame.image.load("./gfx/player.png").convert_alpha()
         self.image = self.start_image
+        self.rect = local.Rect(self.position.x,
+                               self.position.y,
+                               self.image.get_width(),
+                               self.image.get_height())
 
         # used to show which way self.image is pointing
         self.pointing = -1
@@ -86,7 +92,6 @@ class BasePlayer(pygame.sprite.Sprite):
 
         # this will run if controlled by AI
         if self.controller == const.CONTROL_AI:
-            self.steerMngr.seek(Vec2d(4000, 800), 100)
             self.steerMngr.update()
 
         if self.controller == const.CONTROL_USER:
@@ -99,6 +104,11 @@ class BasePlayer(pygame.sprite.Sprite):
                 self.acceleration = self.acceleration - 0.1
             elif self.acceleration < 0:
                 self.acceleration = 0
+
+        self.rect = local.Rect(self.position.x,
+                               self.position.y,
+                               self.image.get_width(),
+                               self.image.get_height())
 
     def _inBounds(self):
         # if x position is more than 0
@@ -115,8 +125,15 @@ class BasePlayer(pygame.sprite.Sprite):
             self.position.y = const.MAP_HEIGHT - const.GRND_BLOCK_H - self.start_image.get_height() - 1
             self.reset()
 
+    def _playerCollisions(self):
+        temp_group = self.game.all_players.copy()
+        temp_group.remove(self)
+        return pygame.sprite.spritecollideany(self, temp_group)
+
     def checkCollisions(self):
         self._inBounds()
+        if self._playerCollisions():
+            self.reset()
 
     def reset(self):
         ''' resets velocity and acceleration to 0 '''
@@ -129,3 +146,9 @@ class BasePlayer(pygame.sprite.Sprite):
             local_y = self.position.y - self.game.camera.y
             self.game.screen.blit(self.image,
                                   (local_x, local_y))
+
+
+class Chaser(BasePlayer):
+    def __init__(self, game):
+        BasePlayer.__init__(game)
+        self.type = "chaser"

@@ -1,9 +1,9 @@
 1. Make scrollable field
             - Able to set pitch dimensions (multiple of 2)				                # done
-            - Not able to scroll past pitch dimensions                                  # not done
+            - Not able to scroll past pitch dimensions                                  # done
             - Camera tracks objects                                                     # done
                         - Need to track middle of objects                               # dont need
-            - 'Hard' ground with collisions                                             # not done
+            - 'Hard' ground with collisions                                             # done
             - Able to set different backgrounds                                         # done
                         - Blit background depending on where screen is                  # done
                         * Animated background                                           # not done
@@ -22,6 +22,7 @@
                                     - Sprite rotates to heading angle                   # done
 
             - User able to control any player                                           # done
+            - Collides with other entities                                              # not done
             - All Players belong to a team (pygame group)                               # not done
             * Each player has foul count
             * Player has skill ratings
@@ -40,8 +41,11 @@
                         - Stupefy (lowers health)
 
 3. Chaser class (Inherits from BasePlayer)
-            - Possession variable for quaffle
-            - Unique methods
-                        - Pass (pass quaffle
-                        - Shoot
-                        - Snatch quaffle
+        - Create FSM for chaser
+            - Implement all behaviours needed
+            - Make sure behaves correctly with other players
+        - Possession variable for quaffle
+        - Unique methods
+            - Pass (pass quaffle
+            - Shoot
+            - Snatch quaffle
