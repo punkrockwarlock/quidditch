@@ -11,6 +11,10 @@
                         - Three goals each end                                          # not done
                         - Spaced apart for independent aiming of shots                  # not done
 
+1.5 Game class
+    - Needs a variable to store the quaffle (? assign in __init__ ?)                    # not done
+        - or self.game.balls["quaffle"]
+
 2. Base Player Class
             - Stays in place if inactive                                                # done
                         * Hover animation                                               # not done
@@ -22,7 +26,7 @@
                                     - Sprite rotates to heading angle                   # done
 
             - User able to control any player                                           # done
-            - Collides with other entities                                              # not done
+            - Collides with other entities                                              # done
             - All Players belong to a team (pygame group)                               # not done
             * Each player has foul count
             * Player has skill ratings
@@ -49,3 +53,7 @@
             - Pass (pass quaffle
             - Shoot
             - Snatch quaffle
+
+4. Quaffle
+    - Needs a possession variable, that shows who has it, or None
+        - should be called 'held_by'

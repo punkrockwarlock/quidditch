@@ -8,11 +8,12 @@ from Vector import Vec2d
 
 
 class BasePlayer(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, team):
         pygame.sprite.Sprite.__init__(self)
         self.steerMngr = SteeringManager.SteeringManager(game, self)
 
         self.game = game
+        self.team = team.copy().remove(self)
         self.position = Vec2d(100, 100)
         self.velocity = Vec2d(0, 0)
         self.new_velocity = Vec2d(0, 0)
@@ -27,6 +28,7 @@ class BasePlayer(pygame.sprite.Sprite):
                                self.position.y,
                                self.image.get_width(),
                                self.image.get_height())
+        self.mask = pygame.mask.from_surface(self.image)
 
         # used to show which way self.image is pointing
         self.pointing = -1
@@ -85,6 +87,7 @@ class BasePlayer(pygame.sprite.Sprite):
                 temp_image = pygame.transform.rotate(temp_image, angle)
 
         self.image = temp_image
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rotateToHeading()
@@ -99,11 +102,11 @@ class BasePlayer(pygame.sprite.Sprite):
                                                 self.acceleration),
                                                 self.max_velocity)
 
-            # slow down acceleration and make sure it isn't < 0
-            if self.acceleration > 0:
-                self.acceleration = self.acceleration - 0.1
-            elif self.acceleration < 0:
-                self.acceleration = 0
+        # slow down acceleration and make sure it isn't < 0
+        if self.acceleration > 0:
+            self.acceleration = self.acceleration - 0.1
+        elif self.acceleration < 0:
+            self.acceleration = 0
 
         self.rect = local.Rect(self.position.x,
                                self.position.y,
@@ -128,12 +131,18 @@ class BasePlayer(pygame.sprite.Sprite):
     def _playerCollisions(self):
         temp_group = self.game.all_players.copy()
         temp_group.remove(self)
-        return pygame.sprite.spritecollideany(self, temp_group)
+        collided_with = pygame.sprite.spritecollideany(self, temp_group)
+        if collided_with:
+            if functions.pixel_collide(collided_with, self):
+                return collided_with
 
     def checkCollisions(self):
         self._inBounds()
-        if self._playerCollisions():
+        player_collided = self._playerCollisions()
+        if player_collided:
             self.reset()
+            self.velocity = (player_collided.position - self.position) * -1
+            self.acceleration = 2
 
     def reset(self):
         ''' resets velocity and acceleration to 0 '''

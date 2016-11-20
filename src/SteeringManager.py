@@ -53,7 +53,7 @@ class SteeringManager:
         # velocity += self.steering
         velocity = functions.truncate(velocity + self.steering, self.host.max_velocity)
 
-        self.host.velocity = velocity
+        self.host.velocity = velocity * self.host.acceleration
         self.host.position += velocity
 
     def reset(self):

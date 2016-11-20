@@ -59,8 +59,8 @@ def sign(num):
         return 1
 
 
-def distance(d_from, d_to):
-    return math.sqrt((d_to.x - d_from.x)**2 + (d_to.y - d_from.y)**2)
+# def distance(d_from, d_to):
+#    return math.sqrt((d_to.x - d_from.x)**2 + (d_to.y - d_from.y)**2)
 
 
 def get_closest(d_from, group):
@@ -70,6 +70,13 @@ def get_closest(d_from, group):
             closest = elem
     return closest
 
+def pixel_collide(first, second):
+    offset_x = (first.rect.left - second.rect.left)
+    offset_y = (first.rect.top - second.rect.top)
+    if (second.mask.overlap(first.mask, (offset_x, offset_y)) != None):
+        return True
+    else:
+        return False
 
 def circle_collide(first, second):
     between = distance(first, second)
@@ -107,3 +114,58 @@ def truncate(vector, m):
 class Dummy:
     def __init__(self, vec):
         self.position = vec
+
+# chaser:
+# self.team = ["team - me"]
+# self.opposition = ["opposition"]
+# self.team_chasers = ["chasers in team - me"]
+
+
+def distance(from_sprite, to_sprite):
+    return (to_sprite.position - from_sprite.position).length()
+
+
+def groupClosest(group, sprite):
+    closest = None
+    for member in group:
+        if closest is not None:
+            if (distance(member, sprite) < distance(closest, sprite)):
+                closest = member
+        else:
+            closest = member
+
+    return closest
+
+
+def groupPossession(game, group):
+    return group.has(game.balls["quaffle"].held_by)
+
+
+def groupIsBlocking(group, from_sprite, to_sprite):
+    blocked = False
+    for member in group:
+        member_centre = Vec2d(member.pos.x + member.rect.get_width() / 2,
+                              member.pos.y + member.rect.get_height() / 2)
+        radius = member.rect.get_width() / 2
+        closest_point = closest_point_on_seg(from_sprite.position,
+                                             to_sprite.position,
+                                             member_centre)
+        if distance(member_centre, closest_point) < radius:
+                blocked = True
+    return blocked
+
+
+def closest_point_on_seg(seg_a, seg_b, circ_pos):
+    seg_v = seg_b - seg_a
+    pt_v = circ_pos - seg_a
+    if seg_v.len() <= 0:
+        raise ValueError, "Invalid segment length"
+    seg_v_unit = seg_v / seg_v.get_length()
+    proj = pt_v.dot(seg_v_unit)
+    if proj <= 0:
+        return seg_a.copy()
+    if proj >= seg_v.get_length():
+        return seg_b.copy()
+    proj_v = seg_v_unit * proj
+    closest = proj_v + seg_a
+    return closest

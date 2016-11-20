@@ -49,22 +49,6 @@ class Camera:
                 self.y = const.MAP_HEIGHT - const.SCREEN_HEIGHT
 
 
-class FSM:
-    def __init__(self, parent):
-        self.parent = parent
-        self.stateStack = []
-
-    def pop(self):
-        return self.stateStack.pop()
-
-    def push(self, state):
-        self.stateStack.append(state)
-
-    def update(self):
-        current = self.stateStack[len(self.stateStack) - 1]
-        current()
-
-
 class Background:
     def __init__(self, game):
         self.game = game
@@ -78,7 +62,7 @@ class Background:
                    (0, const.MAP_HEIGHT - self.main_image.get_height()))
         self.main_image = image
 
-    def draw(self):
+    def draw(self
         drawRect = local.Rect(self.game.camera.x,
                               self.game.camera.y,
                               const.SCREEN_WIDTH,

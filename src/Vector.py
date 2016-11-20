@@ -239,11 +239,15 @@ class Vec2d(object):
 
     def get_length(self):
         return math.sqrt(self.x**2 + self.y**2)
+        
     def __setlength(self, value):
         length = self.get_length()
         self.x *= value/length
         self.y *= value/length
     length = property(get_length, __setlength, None, "gets or sets the magnitude of the vector")
+
+    def copy(self):
+        return Vec2d(self.x, self.y)
 
     def rotate(self, angle_degrees):
         radians = math.radians(angle_degrees)
