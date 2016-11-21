@@ -16,6 +16,25 @@ class Game:
         self.opposition_team = pygame.sprite.Group()
         self.all_players = pygame.sprite.Group()
 
+        self.teams = {}
+
+    def add_team(self, team):
+        if team.type in ("player_controlled", "ai_controlled"):
+            if team_type not in self.teams:
+                self.teams[team_type] = team
+            else:
+                raise KeyError("That team already exists")
+        else:
+            raise ValueError("Invalid team type")
+
+    def get_team(self, type_or_player):
+        if type_or_player in ("player_controlled", "ai_controlled"):
+            return self.teams[type_or_player]
+        else:
+            for team in self.teams.values():
+                if player in team:
+                    return team
+
 
 class Camera:
     def __init__(self):
@@ -100,3 +119,28 @@ class GroundBlock:
         local_y = self.position.y - self.game.camera.y
         if self.game.camera.onScreen(self):
             self.game.screen.blit(self.image, (local_x, local_y))
+
+class Team(pygame.sprite.Group):
+    def __init__(self, team_type):
+        pygame.sprite.Group.__init__()
+        self.type = team_type
+
+    def _findPlayer(self, position):
+        for player in self:
+            if player.type == position:
+                return player
+        return None
+
+    def get_player(self, position):
+        if position in ("keeper", "seeker"):
+            return self._findPlayer(position)
+        else:
+            raise KeyError("Could not find the position in team")
+
+    def get_group(self, group_name):
+        theGroup = pygame.sprite.Group()
+        if group_name in ("chaser", "beater"):
+            for player in self:
+                if player.type == group_name:
+                    theGroup.add(v)
+        return theGroup
