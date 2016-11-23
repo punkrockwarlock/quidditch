@@ -81,7 +81,7 @@ class Background:
                    (0, const.MAP_HEIGHT - self.main_image.get_height()))
         self.main_image = image
 
-    def draw(self
+    def draw(self):
         drawRect = local.Rect(self.game.camera.x,
                               self.game.camera.y,
                               const.SCREEN_WIDTH,

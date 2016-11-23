@@ -1,6 +1,6 @@
 Implementation:
 - need to add 'team' and 'opposition' variables to BasePlayer class
-            - these are strings of 'player_controlled' or 'ai_controlled'               # not done
+            - these are strings of 'player_controlled' or 'ai_controlled'               # done
 - need to implement a 'follow' steering behaviour                                       # not done
 
 1. Make scrollable field

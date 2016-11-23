@@ -1,8 +1,8 @@
 import pygame
 import math
 import pygame.locals as local
-import src.constants as const
-from src.Vector import Vec2d
+import constants as const
+from Vector import Vec2d
 import sys
 
 

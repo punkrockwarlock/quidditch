@@ -13,7 +13,8 @@ class BasePlayer(pygame.sprite.Sprite):
         self.steerMngr = SteeringManager.SteeringManager(game, self)
 
         self.game = game
-        self.team = team.copy().remove(self)
+        self.team = team
+        self.opposition = "player_controlled" if team == "player_controlled" else "ai_controlled"
         self.position = Vec2d(100, 100)
         self.velocity = Vec2d(0, 0)
         self.new_velocity = Vec2d(0, 0)
