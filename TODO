@@ -1,5 +1,9 @@
+Implementation:
+- need to add 'team' and 'opposition' variables to BasePlayer class
+            - these are strings of 'player_controlled' or 'ai_controlled'               # not done
+
 1. Make scrollable field
-            - Able to set pitch dimensions (multiple of 2)				                # done
+            - Able to set pitch dimensions (multiple of 2)	                            # done
             - Not able to scroll past pitch dimensions                                  # done
             - Camera tracks objects                                                     # done
                         - Need to track middle of objects                               # dont need
