@@ -3,6 +3,18 @@ Implementation:
             - these are strings of 'player_controlled' or 'ai_controlled'               # done
 - need to implement a 'follow' steering behaviour                                       # not done
 
+- fix chaser_fsm support method                                                         # not done
+            - it doesn't do anything atm                                                # not done
+- add comments for all constants                                                        # not done
+- add const.MAX_PASS_DIST                                                               # not done
+- add const.MAX_SHOOT_DIST                                                              # not done
+- add const.CHASER_AVOID                                                                # not done
+
+- add pass method to Chaser class                                                       # not done
+- add support_position variables to Chaser class                                        # not done
+            - keeps track of whether support_positions have been assigned               # not done
+            - should be set to None when chaser loses possession                        # not done
+
 1. Make scrollable field
             - Able to set pitch dimensions (multiple of 2)	                            # done
             - Not able to scroll past pitch dimensions                                  # done
