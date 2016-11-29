@@ -1,4 +1,5 @@
-import functions
+﻿import functions
+import random
 import constants as const
 
 
@@ -123,11 +124,11 @@ class fsm_Chaser(FSM):
             self.push(self.defend)
             return
 
-        # if i lose the quaffle
+        # if we lose the quaffle
         if not self.parent.team.has(self.game.quaffle.getPossession()):
             self.pop()
             self.push(self.free_quaffle)
-            return
+            return          
 
     def defend(self):
         """ Implements behaviour of defending when opposition has possession """
@@ -146,7 +147,7 @@ class fsm_Chaser(FSM):
         # if closest to player with quaffle
         my_chasers = self.game.get_team(self).get_group("chaser")
         closest = functions.groupClosest(my_chasers, self.game.quaffle)
-        if closest == self:
+        if closest == self.parent:
             # change state to tackle
             self.pop()
             self.push(self.tackle)
@@ -179,8 +180,79 @@ class fsm_Chaser(FSM):
         # if i am no longer the closest chaser
         my_chasers = self.game.get_team(self).get_group("chaser")
         closest = functions.groupClosest(my_chasers, self.game.quaffle)
-        if closest != self:
+        if closest != self.parent:
             # change state to defend
             self.pop()
             self.push(self.defend)
+            return
+
+    def pass_quaffle(self):
+        """ Implements the behaviour of passing the quaffle to a team chaser """
+
+        # get the closest team chaser
+        my_chasers = self.game.get_team(self).get_group("chaser")
+        my_chasers.remove(self)
+        closest = functions.groupClosest(my_chasers, self.game.quaffle)
+
+        # seek towards closest
+        self.parent.steerMngr.seek(closest)
+
+        # if i lose possession
+        if self.game.quaffle.getPossession() != self.parent:
+            # if the quaffle is free
+            if self.game.quaffle.getPossession() == None:
+                # change state to quaffle_free
+                self.pop()
+                self.push(self.quaffle_free)
+                return
+            # elif opposition has quaffle
+            else:
+                # change state to defend
+                self.pop()
+                self.push(self.defend)
+                return
+
+        # if the closest is within passing distance
+        if distance(closest, self.parent) <= const.MAX_PASS_DIST:
+            # throw the quaffle in the direction of closest
+            self.parent.pass_to(closest)
+            # change state to support
+            self.pop()
+            self.push(self.support_attack)
+            return
+        # else we shouldn't pass to them so
+        else:
+            # change state to attack_goal
+            self.pop()
+            self.push(self.attack_goal()
+            return
+
+    def shoot(self):
+        """ Implements the behaviour of throwing the quaffle towards a goal """
+
+        # get the closest opposition goal
+        # seek towards the goal
+
+        # if i lose possession
+        if self.game.quaffle.getPossession() != self.parent:
+            # if the quaffle is free
+            if self.game.quaffle.getPossession() == None:
+                # change state to quaffle_free
+                self.pop()
+                self.push(self.quaffle_free)
+                return
+            # elif opposition has quaffle
+            else:
+                # change state to defend
+                self.pop()
+                self.push(self.defend)
+                return 
+
+        # if the goal is within shooting distance
+        if distance(goal, self.parent) < const.MAX_SHOOT_DIST:
+            # throw the quaffle in the direction of the goal
+            self.parent.shoot(goal)
+            # change the state to quaffle_free
+            self.pop()
+            self.push(self.quaffle_free)
             return
