@@ -5,6 +5,8 @@ import src.classes as classes
 import src.functions as functions
 import src.constants as const
 from src.BasePlayer import BasePlayer
+import src.Balls as Balls
+from src.Vector import Vec2d
 
 
 # initialise pygame and setup local variables
@@ -18,11 +20,13 @@ game = classes.Game()
 background = classes.Background(game)
 ground = classes.Ground(game)
 
-player = BasePlayer(game)
+player = BasePlayer(game, "player_controlled")
 player.position.x = 200
 player.controller = const.CONTROL_USER
 
-player2 = BasePlayer(game)
+player2 = BasePlayer(game, "player_controlled")
+quaffle = Balls.Quaffle(game)
+quaffle.position = Vec2d(200, 200)
 game.all_players.add(player, player2)
 # goal1 = Goal(game, 100, 300)
 
@@ -47,6 +51,7 @@ while 1:
     player.draw()
     player2.draw()
     ground.draw()
+    quaffle.draw()
 
     # display changes on screen
     pygame.display.flip()

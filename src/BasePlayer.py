@@ -14,10 +14,12 @@ class BasePlayer(pygame.sprite.Sprite):
 
         self.game = game
         self.team = team
+        self.type = None
         self.opposition = "player_controlled" if team == "player_controlled" else "ai_controlled"
         self.position = Vec2d(100, 100)
         self.velocity = Vec2d(0, 0)
         self.new_velocity = Vec2d(0, 0)
+        self.acceleration = 0
 
         # determines if this is controlled by user or AI
         self.controller = const.CONTROL_AI
@@ -40,7 +42,6 @@ class BasePlayer(pygame.sprite.Sprite):
         # should be overwritten by inherited classes
         self.max_force = 5
         self.max_velocity = 20
-        self.acceleration = 0
         self.mass = 5
 
     def changeHeading(self, direction):

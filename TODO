@@ -6,9 +6,9 @@ Implementation:
 - fix chaser_fsm support method                                                         # not done
             - it doesn't do anything atm                                                # not done
 - add comments for all constants                                                        # not done
-- add const.MAX_PASS_DIST                                                               # not done
-- add const.MAX_SHOOT_DIST                                                              # not done
-- add const.CHASER_AVOID                                                                # not done
+- add const.MAX_PASS_DIST                                                               # done
+- add const.MAX_SHOOT_DIST                                                              # done
+- add const.CHASER_AVOID                                                                # done
 
 - add pass method to Chaser class                                                       # not done
 - add support_position variables to Chaser class                                        # not done
@@ -62,15 +62,15 @@ Implementation:
                         - Stupefy (lowers health)
 
 3. Chaser class (Inherits from BasePlayer)
-        - Create FSM for chaser
-            - Implement all behaviours needed
-            - Make sure behaves correctly with other players
-        - Possession variable for quaffle
-        - Unique methods
-            - Pass (pass quaffle
-            - Shoot
-            - Snatch quaffle
+        - Create FSM for chaser                                                     # done
+            - Implement all behaviours needed                                       # done
+            - Make sure behaves correctly with other players                        # not done
+        - Possession variable for quaffle                                           # not needed
+        - Unique methods                                                            # not done
+            - Pass (pass quaffle                                                    # not done
+            - Shoot                                                                 # not done
+            - Snatch quaffle                                                        # not done
 
 4. Quaffle
-    - Needs a possession variable, that shows who has it, or None
-        - should be called 'held_by'
+    - Needs a possession variable, that shows who has it, or None                   # done
+        - should be called 'held_by'                                                # done

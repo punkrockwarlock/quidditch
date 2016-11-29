@@ -1,6 +1,5 @@
 # constants
 
-
 # system controls
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 640
@@ -22,3 +21,6 @@ CONTROL_AI = 2
 # used in chaser_fsm
 GRAB_DISTANCE = 20
 PRESSURE_DISTANCE = 50
+MAX_PASS_DIST = 500
+MAX_SHOOT_DIST = 500
+CHASER_AVOID = 300

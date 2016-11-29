@@ -20,8 +20,8 @@ class Game:
 
     def add_team(self, team):
         if team.type in ("player_controlled", "ai_controlled"):
-            if team_type not in self.teams:
-                self.teams[team_type] = team
+            if team.type not in self.teams:
+                self.teams[team.type] = team
             else:
                 raise KeyError("That team already exists")
         else:
@@ -32,7 +32,7 @@ class Game:
             return self.teams[type_or_player]
         else:
             for team in self.teams.values():
-                if player in team:
+                if type_or_player in team:
                     return team
 
 
@@ -142,5 +142,5 @@ class Team(pygame.sprite.Group):
         if group_name in ("chaser", "beater"):
             for player in self:
                 if player.type == group_name:
-                    theGroup.add(v)
+                    theGroup.add(group_name)
         return theGroup
