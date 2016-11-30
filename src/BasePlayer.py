@@ -4,6 +4,7 @@ import SteeringManager
 import functions
 import constants as const
 import classes
+import FSM
 from Vector import Vec2d
 
 
@@ -45,6 +46,9 @@ class BasePlayer(pygame.sprite.Sprite):
         self.mass = 5
 
     def changeHeading(self, direction):
+        if self.controller == const.CONTROL_AI:
+            return
+
         if direction == "left":
             vec = Vec2d(-1, 0)
             self.acceleration += 0.4
@@ -91,7 +95,7 @@ class BasePlayer(pygame.sprite.Sprite):
         self.image = temp_image
         self.mask = pygame.mask.from_surface(self.image)
 
-    def update(self):
+    def _update(self):
         self.rotateToHeading()
         self.checkCollisions()
 
@@ -134,6 +138,8 @@ class BasePlayer(pygame.sprite.Sprite):
         temp_group = self.game.all_players.copy()
         temp_group.remove(self)
         collided_with = pygame.sprite.spritecollideany(self, temp_group)
+        temp_group.empty()
+        temp_group = None
         if collided_with:
             if functions.pixel_collide(collided_with, self):
                 return collided_with
@@ -160,6 +166,20 @@ class BasePlayer(pygame.sprite.Sprite):
 
 
 class Chaser(BasePlayer):
-    def __init__(self, game):
-        BasePlayer.__init__(game)
+    def __init__(self, game, team):
+        BasePlayer.__init__(self, game, team)
         self.type = "chaser"
+        self.fsm = FSM.fsm_Chaser(self)
+        self.goal = []
+
+        # personalised
+        self.shoot_distance = 100
+
+    def getShootDist(self):
+        return self.shoot_distance
+
+    def update(self):
+        self._update()
+
+        if self.controller == const.CONTROL_AI:
+            self.fsm.update()

@@ -17,16 +17,15 @@ class SteeringManager:
         # ahead2 = self.host.position + ((self.host.velocity.normalized() *
                                         # self.host.max_see_ahead) * 0.5)
 
-        mostThreatening = functions.get_closest(self.host,
-                                                self.game.get_team(self.host,
-                                                                   True).sprites())
-        if (functions.distance(self.host.position, mostThreatening.position) > 100):
+        mostThreatening = functions.groupClosest(self.game.get_team(self.host.opposition),
+                                                 self.host)
+        if (functions.distance(self.host, mostThreatening) > 100):
             mostThreatening = None
         avoidance = Vec2d(0, 0)
         if (mostThreatening is not None):
             avoidance = ahead - mostThreatening.position
             avoidance = avoidance.normalized()
-            avoidance *= self.host.max_avoid_force
+            avoidance *= self.host.max_force
         self.steering += avoidance
 
     def seek(self, target, slowingRadius=0):

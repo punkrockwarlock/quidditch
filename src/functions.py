@@ -32,7 +32,7 @@ def eventHandler(player):
                 sys.exit()
 
             if event.key == local.K_x:
-                print player.position
+                print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
 
 
 def onMap(sprite):
@@ -122,7 +122,7 @@ class Dummy:
 
 
 def distance(from_sprite, to_sprite):
-    return (to_sprite.position - from_sprite.position).length()
+    return (to_sprite.position - from_sprite.position).get_length()
 
 
 def groupClosest(group, sprite):

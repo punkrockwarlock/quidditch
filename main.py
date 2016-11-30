@@ -4,7 +4,7 @@ import pygame.locals as local
 import src.classes as classes
 import src.functions as functions
 import src.constants as const
-from src.BasePlayer import BasePlayer
+import src.BasePlayer as BasePlayer
 import src.Balls as Balls
 from src.Vector import Vec2d
 
@@ -20,15 +20,20 @@ game = classes.Game()
 background = classes.Background(game)
 ground = classes.Ground(game)
 
-player = BasePlayer(game, "player_controlled")
+player = BasePlayer.Chaser(game, "ai_controlled")
 player.position.x = 200
-player.controller = const.CONTROL_USER
 
-player2 = BasePlayer(game, "player_controlled")
+player_team = classes.Team("ai_controlled")
+player_team.add(player)
+game.add_team(player_team)
+
+player2 = BasePlayer.BasePlayer(game, "player_controlled")
 quaffle = Balls.Quaffle(game)
 quaffle.position = Vec2d(200, 200)
 game.all_players.add(player, player2)
-# goal1 = Goal(game, 100, 300)
+game.quaffle = quaffle
+goal1 = classes.Goal(game)
+player.goal.append(goal1)
 
 game.camera.track = player
 
@@ -46,7 +51,7 @@ while 1:
     # update the screen
     game.camera.update()
     player.update()
-    player2.update()
+    player2._update()
 
     player.draw()
     player2.draw()

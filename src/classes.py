@@ -12,11 +12,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.fps = 60
 
-        self.player_team = pygame.sprite.Group()
-        self.opposition_team = pygame.sprite.Group()
         self.all_players = pygame.sprite.Group()
-
         self.teams = {}
+        self.quaffle = None
 
     def add_team(self, team):
         if team.type in ("player_controlled", "ai_controlled"):
@@ -120,9 +118,10 @@ class GroundBlock:
         if self.game.camera.onScreen(self):
             self.game.screen.blit(self.image, (local_x, local_y))
 
+
 class Team(pygame.sprite.Group):
     def __init__(self, team_type):
-        pygame.sprite.Group.__init__()
+        pygame.sprite.Group.__init__(self)
         self.type = team_type
 
     def _findPlayer(self, position):
@@ -138,9 +137,16 @@ class Team(pygame.sprite.Group):
             raise KeyError("Could not find the position in team")
 
     def get_group(self, group_name):
-        theGroup = pygame.sprite.Group()
+        theGroup = []
         if group_name in ("chaser", "beater"):
             for player in self:
                 if player.type == group_name:
-                    theGroup.add(group_name)
+                    theGroup.append(player)
         return theGroup
+
+
+class Goal(pygame.sprite.Sprite):
+    def __init__(self, game):
+        pygame.sprite.Sprite.__init__(self)
+        self.game = game
+        self.position = Vec2d(0, 0)
