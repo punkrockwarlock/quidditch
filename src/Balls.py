@@ -35,13 +35,14 @@ class Quaffle(Ball):
     def __init__(self, game):
         Ball.__init__(self, game)
         self.image = pygame.image.load("./gfx/quaffle.png")
+        self.mask = pygame.mask.from_surface(self.image)
         self.held_by = None
 
     def update(self):
         self._update()
 
     def draw(self):
-        if self.game.camera.onScreen(self) and self.held_by:
+        if self.game.camera.onScreen(self):
             local_x = self.position.x - self.game.camera.x
             local_y = self.position.y - self.game.camera.y
             self.game.screen.blit(self.image,

@@ -19,6 +19,7 @@ class SteeringManager:
 
         mostThreatening = functions.groupClosest(self.game.get_team(self.host.opposition),
                                                  self.host)
+
         if (functions.distance(self.host, mostThreatening) > 100):
             mostThreatening = None
         avoidance = Vec2d(0, 0)
@@ -52,7 +53,7 @@ class SteeringManager:
         # velocity += self.steering
         velocity = functions.truncate(velocity + self.steering, self.host.max_velocity)
 
-        self.host.velocity = velocity * self.host.acceleration
+        self.host.velocity = velocity
         self.host.position += velocity
 
     def reset(self):

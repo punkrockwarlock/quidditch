@@ -21,6 +21,7 @@ class BasePlayer(pygame.sprite.Sprite):
         self.velocity = Vec2d(0, 0)
         self.new_velocity = Vec2d(0, 0)
         self.acceleration = 0
+        self.ai_acceleration = 2
 
         # determines if this is controlled by user or AI
         self.controller = const.CONTROL_AI
@@ -104,9 +105,10 @@ class BasePlayer(pygame.sprite.Sprite):
             self.steerMngr.update()
 
         if self.controller == const.CONTROL_USER:
-            self.position += functions.truncate((self.velocity.normalized() *
-                                                self.acceleration),
-                                                self.max_velocity)
+            pass
+            #self.position += functions.truncate((self.velocity.normalized() *
+                                                #self.acceleration),
+                                                #self.max_velocity)
 
         # slow down acceleration and make sure it isn't < 0
         if self.acceleration > 0:

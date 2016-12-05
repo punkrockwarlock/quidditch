@@ -17,7 +17,6 @@ class FSM:
 
     def update(self):
         current = self.stateStack[len(self.stateStack) - 1]
-        print current
         current()
 
 
@@ -198,7 +197,7 @@ class fsm_Chaser(FSM):
         closest = functions.groupClosest(my_chasers, self.game.quaffle)
 
         # seek towards closest
-        self.parent.steerMngr.seek(closest)
+        self.parent.steerMngr.seek(closest.position)
 
         # if i lose possession
         if self.game.quaffle.getPossession() != self.parent:
