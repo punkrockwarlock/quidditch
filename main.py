@@ -22,9 +22,12 @@ ground = classes.Ground(game)
 
 player = BasePlayer.Chaser(game, "ai_controlled")
 player.position.x = 200
+player3 = BasePlayer.Chaser(game, "ai_controlled")
+player3.position.x = 400
 
 player_team = classes.Team("ai_controlled")
 player_team.add(player)
+player_team.add(player3)
 game.add_team(player_team)
 
 player2 = BasePlayer.BasePlayer(game, "player_controlled")
@@ -52,9 +55,11 @@ while 1:
     game.camera.update()
     player.update()
     player2._update()
+    player3.update()
 
     player.draw()
     player2.draw()
+    player3.draw()
     ground.draw()
     quaffle.draw()
 

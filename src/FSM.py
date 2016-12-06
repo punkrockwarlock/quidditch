@@ -137,7 +137,7 @@ class fsm_Chaser(FSM):
 
         # follow the closest opposition chaser
         opp_chasers = self.game.get_team(self.parent.opposition).get_group("chaser")
-        closest = functions.groupClosest(opp_chasers, self)
+        closest = functions.groupClosest(opp_chasers, self.parent)
         self.parent.steerMngr.follow(closest)                # need to implement a follow steering behaviour
 
         # if opposition lose possession
@@ -215,7 +215,7 @@ class fsm_Chaser(FSM):
                 return
 
         # if the closest is within passing distance
-        if distance(closest, self.parent) <= const.MAX_PASS_DIST:
+        if functions.distance(closest, self.parent) <= const.MAX_PASS_DIST:
             # throw the quaffle in the direction of closest
             self.parent.pass_to(closest)
             # change state to support
