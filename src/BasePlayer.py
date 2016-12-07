@@ -16,7 +16,7 @@ class BasePlayer(pygame.sprite.Sprite):
         self.game = game
         self.team = team
         self.type = None
-        self.opposition = "player_controlled" if team == "player_controlled" else "ai_controlled"
+        self.opposition = "player_controlled" if team == "ai_controlled" else "ai_controlled"
         self.position = Vec2d(100, 100)
         self.velocity = Vec2d(0, 0)
         self.new_velocity = Vec2d(0, 0)
@@ -176,6 +176,7 @@ class Chaser(BasePlayer):
 
         # personalised
         self.shoot_distance = 100
+        self.shoot_power = 20
 
     def getShootDist(self):
         return self.shoot_distance
@@ -185,3 +186,7 @@ class Chaser(BasePlayer):
 
         if self.controller == const.CONTROL_AI:
             self.fsm.update()
+
+    def shoot(self):
+        angle_to_goal = self.position.get_angle_between(self.goal[0].position)
+        self.game.quaffle.throw(angle_to_goal, self.shoot_power)

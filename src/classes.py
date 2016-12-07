@@ -149,4 +149,4 @@ class Goal(pygame.sprite.Sprite):
     def __init__(self, game):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.position = Vec2d(0, 0)
+        self.position = Vec2d(500, 100)

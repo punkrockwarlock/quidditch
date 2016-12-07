@@ -32,6 +32,11 @@ game.add_team(player_team)
 
 player2 = BasePlayer.BasePlayer(game, "player_controlled")
 quaffle = Balls.Quaffle(game)
+
+opposition_team = classes.Team("player_controlled")
+opposition_team.add(player2)
+game.add_team(opposition_team)
+
 quaffle.position = Vec2d(200, 200)
 game.all_players.add(player, player2)
 game.quaffle = quaffle
@@ -54,8 +59,11 @@ while 1:
     # update the screen
     game.camera.update()
     player.update()
+    #print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
     player2._update()
     player3.update()
+    quaffle.update()
+    print quaffle.velocity
 
     player.draw()
     player2.draw()

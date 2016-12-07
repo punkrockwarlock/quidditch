@@ -88,7 +88,9 @@ class fsm_Chaser(FSM):
         self.parent.steerMngr.collisionAvoidance()
 
         # if opposition chaser is too close
-        if functions.distance(functions.groupClosest(self.game.get_team(self.parent.opposition), self.parent), self.parent) < const.PRESSURE_DISTANCE:
+        closest = functions.groupClosest(self.game.get_team(self.parent.opposition), self.parent)
+        if functions.distance(closest, self.parent) < const.PRESSURE_DISTANCE:
+            print "closest baddie: ", closest.team
             # change to pass state
             self.pop()
             self.push(self.pass_quaffle)
@@ -99,14 +101,9 @@ class fsm_Chaser(FSM):
             self.pop()
             self.push(self.shoot)
             return
-        # if i have been tackled
-        if self.parent.tackled:
-            self.pop()
-            self.push(self.defend)
-            return
 
         # if no longer in possession
-        if self.game.quaffle.possession != self:
+        if self.game.quaffle.getPossession() != self.parent:
             # change to default state
             self.pop()
             self.push(self.free_quaffle)
@@ -138,7 +135,7 @@ class fsm_Chaser(FSM):
         # follow the closest opposition chaser
         opp_chasers = self.game.get_team(self.parent.opposition).get_group("chaser")
         closest = functions.groupClosest(opp_chasers, self.parent)
-        self.parent.steerMngr.follow(closest)                # need to implement a follow steering behaviour
+        self.parent.steerMngr.seek(closest.position)                # need to implement a follow steering behaviour
 
         # if opposition lose possession
         if not self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
@@ -147,7 +144,7 @@ class fsm_Chaser(FSM):
             self.push(self.support_attack)
             return
         # if closest to player with quaffle
-        my_chasers = self.game.get_team(self).get_group("chaser")
+        my_chasers = self.game.get_team(self.parent).get_group("chaser")
         closest = functions.groupClosest(my_chasers, self.game.quaffle)
         if closest == self.parent:
             # change state to tackle
@@ -177,7 +174,7 @@ class fsm_Chaser(FSM):
         if self.game.quaffle.getPossession is None:
             # change state to quaffle_free
             self.pop()
-            self.push(self.quaffle_free)
+            self.push(self.free_quaffle)
             return
         # if i am no longer the closest chaser
         my_chasers = self.game.get_team(self).get_group("chaser")
@@ -205,7 +202,7 @@ class fsm_Chaser(FSM):
             if self.game.quaffle.getPossession() is None:
                 # change state to quaffle_free
                 self.pop()
-                self.push(self.quaffle_free)
+                self.push(self.free_quaffle)
                 return
             # elif opposition has quaffle
             else:
@@ -226,7 +223,7 @@ class fsm_Chaser(FSM):
         else:
             # change state to attack_goal
             self.pop()
-            self.push(self.attack_goal())
+            self.push(self.attack_goal)
             return
 
     def shoot(self):
@@ -241,7 +238,7 @@ class fsm_Chaser(FSM):
             if self.game.quaffle.getPossession() is None:
                 # change state to quaffle_free
                 self.pop()
-                self.push(self.quaffle_free)
+                self.push(self.free_quaffle)
                 return
             # elif opposition has quaffle
             else:
@@ -251,10 +248,10 @@ class fsm_Chaser(FSM):
                 return
 
         # if the goal is within shooting distance
-        if functions.distance(goal, self.parent) < const.MAX_SHOOT_DIST:
+        if functions.distance(self.parent.goal[0], self.parent) < const.MAX_SHOOT_DIST:
             # throw the quaffle in the direction of the goal
-            self.parent.shoot(goal)
+            self.parent.shoot()
             # change the state to quaffle_free
             self.pop()
-            self.push(self.quaffle_free)
+            self.push(self.free_quaffle)
             return

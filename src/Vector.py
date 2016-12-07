@@ -239,7 +239,7 @@ class Vec2d(object):
 
     def get_length(self):
         return math.sqrt(self.x**2 + self.y**2)
-        
+
     def __setlength(self, value):
         length = self.get_length()
         self.x *= value/length
@@ -270,6 +270,7 @@ class Vec2d(object):
         if (self.get_length_sqrd() == 0):
             return 0
         return math.degrees(math.atan2(self.y, self.x))
+
     def __setangle(self, angle_degrees):
         self.x = self.length
         self.y = 0

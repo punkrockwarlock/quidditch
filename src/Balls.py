@@ -40,6 +40,10 @@ class Quaffle(Ball):
 
     def update(self):
         self._update()
+        if self.held_by:
+            self.position = self.held_by.position
+        else:
+            self.position += self.velocity.normalized() * self.acceleration
 
     def draw(self):
         if self.game.camera.onScreen(self):
@@ -49,8 +53,13 @@ class Quaffle(Ball):
                                   (local_x, local_y))
 
     def setPossession(self, player):
-        assert player.type == "chaser"
         self.held_by = player
 
     def getPossession(self):
         return self.held_by
+
+    def throw(self, angle, power):
+        self.velocity = Vec2d(0, 0)
+        self.velocity = self.velocity.rotated(angle)
+        self.acceleration = power
+        self.setPossession(None)

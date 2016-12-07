@@ -29,7 +29,7 @@ class SteeringManager:
             avoidance *= self.host.max_force
         self.steering += avoidance
 
-    def seek(self, target, slowingRadius=0):
+    def seek(self, target, slowingRadius=1):
         self.steering += self.doSeek(target, slowingRadius)
 
     def flee(self, target):
