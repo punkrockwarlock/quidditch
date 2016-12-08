@@ -150,3 +150,15 @@ class Goal(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.position = Vec2d(500, 100)
+        self.image = pygame.image.load("./gfx/goal.png")
+        self.rect = local.Rect(self.position.x,
+                               self.position.y,
+                               self.image.get_width(),
+                               self.image.get_height())
+
+    def draw(self):
+        if self.game.camera.onScreen(self):
+            local_x = self.position.x - self.game.camera.x
+            local_y = self.position.y - self.game.camera.y
+            self.game.screen.blit(self.image,
+                                  (local_x, local_y))

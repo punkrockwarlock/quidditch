@@ -3,6 +3,7 @@ import pygame.locals as local
 import SteeringManager
 import functions
 import constants as const
+import math
 import classes
 import FSM
 from Vector import Vec2d
@@ -112,7 +113,7 @@ class BasePlayer(pygame.sprite.Sprite):
 
         # slow down acceleration and make sure it isn't < 0
         if self.acceleration > 0:
-            self.acceleration = self.acceleration - 0.1
+            self.acceleration = self.acceleration - const.DAMPING
         elif self.acceleration < 0:
             self.acceleration = 0
 
@@ -175,7 +176,7 @@ class Chaser(BasePlayer):
         self.goal = []
 
         # personalised
-        self.shoot_distance = 100
+        self.shoot_distance = 500
         self.shoot_power = 20
 
     def getShootDist(self):
@@ -188,5 +189,6 @@ class Chaser(BasePlayer):
             self.fsm.update()
 
     def shoot(self):
-        angle_to_goal = self.position.get_angle_between(self.goal[0].position)
+        vec_between = self.goal[0].position - self.position
+        angle_to_goal = vec_between.get_angle()
         self.game.quaffle.throw(angle_to_goal, self.shoot_power)

@@ -30,7 +30,7 @@ player_team.add(player)
 player_team.add(player3)
 game.add_team(player_team)
 
-player2 = BasePlayer.BasePlayer(game, "player_controlled")
+player2 = BasePlayer.Chaser(game, "player_controlled")
 quaffle = Balls.Quaffle(game)
 
 opposition_team = classes.Team("player_controlled")
@@ -63,13 +63,15 @@ while 1:
     player2._update()
     player3.update()
     quaffle.update()
-    print quaffle.velocity
+    print functions.distance(player, player.goal[0])
 
     player.draw()
     player2.draw()
     player3.draw()
     ground.draw()
     quaffle.draw()
+
+    goal1.draw()
 
     # display changes on screen
     pygame.display.flip()

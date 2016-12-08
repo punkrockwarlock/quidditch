@@ -8,6 +8,9 @@ MAP_HEIGHT = 2024
 FPS = 60
 STATUS = "TEST"
 
+# environment constants
+GRAVITY = 0.01
+
 # used to control ground creation
 GRND_BLOCK_W = 64
 GRND_BLOCK_H = 64
@@ -19,8 +22,10 @@ CONTROL_USER = 1
 CONTROL_AI = 2
 
 # used in chaser_fsm
+DAMPING = 0.1
 GRAB_DISTANCE = 40
 PRESSURE_DISTANCE = 50
 MAX_PASS_DIST = 500
 MAX_SHOOT_DIST = 500
 CHASER_AVOID = 300
+POST_SHOOT_DIST = 100

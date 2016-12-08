@@ -253,5 +253,16 @@ class fsm_Chaser(FSM):
             self.parent.shoot()
             # change the state to quaffle_free
             self.pop()
-            self.push(self.free_quaffle)
+            self.push(self.post_shoot)
             return
+
+    def post_shoot(self):
+        if self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
+            # change state to support
+            self.pop()
+            self.push(self.defend)
+            return
+
+        if functions.distance(self.parent, self.game.quaffle) > const.POST_SHOOT_DIST:
+            self.pop()
+            self.push(self.free_quaffle)
