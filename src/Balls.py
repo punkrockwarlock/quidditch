@@ -89,7 +89,6 @@ class Quaffle(Ball):
         return self.held_by
 
     def throw(self, angle, power):
-        self.velocity = Vec2d(1, 1)
-        self.velocity = self.velocity.rotated(angle)
+        self.velocity = angle
         self.acceleration = power
         self.setPossession(None)

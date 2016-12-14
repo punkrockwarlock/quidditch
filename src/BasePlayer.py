@@ -6,6 +6,7 @@ import constants as const
 import math
 import classes
 import FSM
+import random
 from Vector import Vec2d
 
 
@@ -173,11 +174,12 @@ class Chaser(BasePlayer):
         BasePlayer.__init__(self, game, team)
         self.type = "chaser"
         self.fsm = FSM.fsm_Chaser(self)
-        self.goal = []
 
         # personalised
         self.shoot_distance = 500
-        self.shoot_power = 20
+        self.shoot_power = 30
+
+        self.skill_attack = 5
 
     def getShootDist(self):
         return self.shoot_distance
@@ -189,6 +191,16 @@ class Chaser(BasePlayer):
             self.fsm.update()
 
     def shoot(self):
-        vec_between = self.goal[0].position - self.position
-        angle_to_goal = vec_between.get_angle()
-        self.game.quaffle.throw(angle_to_goal, self.shoot_power)
+        oppGoal = self.game.get_goal(self)
+        vec_between = (oppGoal.position - self.position).normalized()
+        self.game.quaffle.throw(vec_between, self.shoot_power)
+
+    def pass_to(self, other):
+        vec_between = (other.position - self.position).normalized()
+        self.game.quaffle.throw(vec_between, self.shoot_power)
+
+    def tackle(self, oppChaser):
+        if (self.skill_attack + random.random() * 5) > 7:
+            return True
+        else:
+            return False

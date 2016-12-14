@@ -40,8 +40,8 @@ game.add_team(opposition_team)
 quaffle.position = Vec2d(200, 200)
 game.all_players.add(player, player2)
 game.quaffle = quaffle
-goal1 = classes.Goal(game)
-player.goal.append(goal1)
+game.quaffle.setPossession(player2)
+game.add_goal(classes.Goal(game), "player_controlled")
 
 game.camera.track = player
 
@@ -59,19 +59,18 @@ while 1:
     # update the screen
     game.camera.update()
     player.update()
-    #print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
+    print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
     player2._update()
     player3.update()
     quaffle.update()
-    print functions.distance(player, player.goal[0])
+    #print functions.distance(player, player.goal[0])
 
-    player.draw()
-    player2.draw()
-    player3.draw()
     ground.draw()
     quaffle.draw()
 
-    goal1.draw()
+    #game.update_teams()
+    game.draw_teams()
+    game.draw_goals()
 
     # display changes on screen
     pygame.display.flip()

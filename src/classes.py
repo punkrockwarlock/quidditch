@@ -14,6 +14,7 @@ class Game:
 
         self.all_players = pygame.sprite.Group()
         self.teams = {}
+        self.goals = {}
         self.quaffle = None
 
     def add_team(self, team):
@@ -33,6 +34,33 @@ class Game:
                 if type_or_player in team:
                     return team
 
+    def update_teams(self):
+        for team in self.teams.values():
+            for player in team:
+                player.update()
+
+    def draw_teams(self):
+        for team in self.teams.values():
+            for player in team:
+                player.draw()
+
+    def add_goal(self, goal, team):
+        if team in self.goals:
+            self.goals[team].append(goal)
+            assert len(self.goals[team]) <= 3
+        else:
+            self.goals[team] = [goal]
+
+    def get_goal(self, player, my_or_opp=1):
+        if my_or_opp:
+            return self.goals[player.opposition][0]
+        else:
+            return self.goals[player.team][0]
+
+    def draw_goals(self):
+        for goals in self.goals.values():
+            for goal in goals:
+                goal.draw()
 
 class Camera:
     def __init__(self):

@@ -84,19 +84,20 @@ class fsm_Chaser(FSM):
             to default state """
 
         # seek towards goal
-        self.parent.steerMngr.seek(self.parent.goal[0].position)
+        oppGoal = self.parent.game.get_goal(self.parent)
+        self.parent.steerMngr.seek(oppGoal.position)
         self.parent.steerMngr.collisionAvoidance()
 
         # if opposition chaser is too close
         closest = functions.groupClosest(self.game.get_team(self.parent.opposition), self.parent)
         if functions.distance(closest, self.parent) < const.PRESSURE_DISTANCE:
-            print "closest baddie: ", closest.team
+            print "closest baddie: ", closest
             # change to pass state
             self.pop()
             self.push(self.pass_quaffle)
             return
         # if within shooting range of goal
-        if functions.distance(self.parent, self.parent.goal[0]) <= self.parent.getShootDist():
+        if functions.distance(self.parent, oppGoal) <= self.parent.getShootDist():
             # change to shoot state
             self.pop()
             self.push(self.shoot)
@@ -116,6 +117,10 @@ class fsm_Chaser(FSM):
 
         # this needs to change so it seeks open space near chaser with quaffle
         # need to implement a follow steering behaviour, and prevent bunching up
+        chaserInPossession = self.game.quaffle.getPossession()
+        if chaserInPossession is not None:
+            self.parent.steerMngr.seek(chaserInPossession.position)
+
 
         # if opposition gets the quaffle
         if self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
@@ -161,11 +166,12 @@ class fsm_Chaser(FSM):
         self.parent.steerMngr.seek(opp_chaser.position)
 
         # if i am within tackle distance
-        if distance(opp_chaser, self) <= const.TACKLE_DIST:
+        if functions.distance(opp_chaser, self.parent) <= const.TACKLE_DIST:
             # perform a skill check to tackle chaser
             success = self.parent.tackle(opp_chaser)
             # if successful
             if success:
+                self.game.quaffle.setPossession(self.parent)
                 # change state to attack goal
                 self.pop()
                 self.push(self.attack_goal)
@@ -177,7 +183,7 @@ class fsm_Chaser(FSM):
             self.push(self.free_quaffle)
             return
         # if i am no longer the closest chaser
-        my_chasers = self.game.get_team(self).get_group("chaser")
+        my_chasers = self.game.get_team(self.parent).get_group("chaser")
         closest = functions.groupClosest(my_chasers, self.game.quaffle)
         if closest != self.parent:
             # change state to defend
@@ -248,7 +254,8 @@ class fsm_Chaser(FSM):
                 return
 
         # if the goal is within shooting distance
-        if functions.distance(self.parent.goal[0], self.parent) < const.MAX_SHOOT_DIST:
+        oppGoal = self.parent.game.get_goal(self.parent)
+        if functions.distance(oppGoal, self.parent) < const.MAX_SHOOT_DIST:
             # throw the quaffle in the direction of the goal
             self.parent.shoot()
             # change the state to quaffle_free
