@@ -29,7 +29,10 @@ class BasePlayer(pygame.sprite.Sprite):
         self.controller = const.CONTROL_AI
 
         # start_image as a starting point for rotation
-        self.start_image = pygame.image.load("./gfx/player.png").convert_alpha()
+        if self.team == "player_controlled":
+            self.start_image = pygame.image.load("./gfx/player.png").convert_alpha()
+        else:
+            self.start_image = pygame.image.load("./gfx/opposition.png").convert_alpha()
         self.image = self.start_image
         self.rect = local.Rect(self.position.x,
                                self.position.y,
@@ -126,16 +129,16 @@ class BasePlayer(pygame.sprite.Sprite):
     def _inBounds(self):
         # if x position is more than 0
         if (self.position.x <= 0):
-            self.position.x = 1
+            self.position.x = 3
             self.reset()
-        if (self.position.x + self.start_image.get_width() >= (const.MAP_WIDTH)):
-            self.position.x = const.MAP_WIDTH - self.start_image.get_width() - 1
+        if (self.position.x + self.start_image.get_width() > (const.MAP_WIDTH)):
+            self.position.x = const.MAP_WIDTH - self.start_image.get_width() - 3
             self.reset()
         if (self.position.y <= 0):
-            self.position.y = 1
+            self.position.y = 3
             self.reset()
         if (self.position.y + self.start_image.get_height() >= (const.MAP_HEIGHT - const.GRND_BLOCK_H)):
-            self.position.y = const.MAP_HEIGHT - const.GRND_BLOCK_H - self.start_image.get_height() - 1
+            self.position.y = const.MAP_HEIGHT - const.GRND_BLOCK_H - self.start_image.get_height() - 3
             self.reset()
 
     def _playerCollisions(self):
@@ -158,7 +161,7 @@ class BasePlayer(pygame.sprite.Sprite):
 
     def reset(self):
         ''' resets velocity and acceleration to 0 '''
-        self.velocity = Vec2d(0, 0)
+        self.velocity *= -1
         self.acceleration = 0
 
     def draw(self):
@@ -177,9 +180,10 @@ class Chaser(BasePlayer):
 
         # personalised
         self.shoot_distance = 500
-        self.shoot_power = 30
+        self.shoot_power = 40
 
         self.skill_attack = 5
+        self.skill_defend = 8
 
     def getShootDist(self):
         return self.shoot_distance
@@ -200,7 +204,7 @@ class Chaser(BasePlayer):
         self.game.quaffle.throw(vec_between, self.shoot_power)
 
     def tackle(self, oppChaser):
-        if (self.skill_attack + random.random() * 5) > 7:
+        if (self.skill_attack + random.random() * 5) > oppChaser.skill_defend:
             return True
         else:
             return False

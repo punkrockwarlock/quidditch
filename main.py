@@ -12,7 +12,8 @@ from src.Vector import Vec2d
 # initialise pygame and setup local variables
 pygame.init()
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((const.SCREEN_WIDTH, const.SCREEN_HEIGHT))
+
+screen = pygame.display.set_mode((const.SCREEN_WIDTH, const.SCREEN_HEIGHT), pygame.FULLSCREEN)
 
 # groups
 game = classes.Game()
@@ -27,23 +28,28 @@ player3.position.x = 400
 
 player_team = classes.Team("ai_controlled")
 player_team.add(player)
-player_team.add(player3)
+player_team.add(BasePlayer.Chaser(game, player_team.type))
+player_team.add(BasePlayer.Chaser(game, player_team.type))
 game.add_team(player_team)
 
-player2 = BasePlayer.Chaser(game, "player_controlled")
-quaffle = Balls.Quaffle(game)
-
 opposition_team = classes.Team("player_controlled")
-opposition_team.add(player2)
+opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
+opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
+opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
 game.add_team(opposition_team)
 
+quaffle = Balls.Quaffle(game)
 quaffle.position = Vec2d(200, 200)
-game.all_players.add(player, player2)
 game.quaffle = quaffle
-game.quaffle.setPossession(player2)
-game.add_goal(classes.Goal(game), "player_controlled")
 
-game.camera.track = player
+game.add_goal(classes.Goal(game, Vec2d(100, 500)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(100, 600)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(100, 700)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(4892, 500)), "ai_controlled")
+game.add_goal(classes.Goal(game, Vec2d(4892, 600)), "ai_controlled")
+game.add_goal(classes.Goal(game, Vec2d(4892, 700)), "ai_controlled")
+
+game.camera.track = quaffle
 
 while 1:
     # fill the screen with black
@@ -58,17 +64,15 @@ while 1:
 
     # update the screen
     game.camera.update()
-    player.update()
-    print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
-    player2._update()
-    player3.update()
+    #print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
+
     quaffle.update()
     #print functions.distance(player, player.goal[0])
 
     ground.draw()
     quaffle.draw()
 
-    #game.update_teams()
+    game.update_teams()
     game.draw_teams()
     game.draw_goals()
 

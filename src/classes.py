@@ -21,6 +21,7 @@ class Game:
         if team.type in ("player_controlled", "ai_controlled"):
             if team.type not in self.teams:
                 self.teams[team.type] = team
+                self.all_players.add(team.sprites())
             else:
                 raise KeyError("That team already exists")
         else:
@@ -174,10 +175,10 @@ class Team(pygame.sprite.Group):
 
 
 class Goal(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, position):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.position = Vec2d(500, 100)
+        self.position = position
         self.image = pygame.image.load("./gfx/goal.png")
         self.rect = local.Rect(self.position.x,
                                self.position.y,

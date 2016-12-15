@@ -49,8 +49,8 @@ class Ball(pygame.sprite.Sprite):
 
     def reset(self):
         ''' resets velocity and acceleration to 0 '''
-        self.velocity = Vec2d(0, 0)
-        self.acceleration = 0
+        self.velocity *= -1
+        self.acceleration /= 10
 
 
 class Quaffle(Ball):
@@ -62,6 +62,10 @@ class Quaffle(Ball):
 
     def update(self):
         self._update()
+
+        gravity_vec = Vec2d(0, const.GRAVITY).normalized()
+        self.velocity += gravity_vec * 0.01
+
         if self.held_by:
             self.position = self.held_by.position.copy()
         else:
@@ -72,8 +76,6 @@ class Quaffle(Ball):
         elif self.acceleration < 0:
             self.acceleration = 0
 
-        gravity_vec = Vec2d(0, const.GRAVITY).normalized()
-        self.velocity += gravity_vec * 0.01
 
     def draw(self):
         if self.game.camera.onScreen(self):

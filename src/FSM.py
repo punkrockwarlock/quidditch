@@ -91,7 +91,6 @@ class fsm_Chaser(FSM):
         # if opposition chaser is too close
         closest = functions.groupClosest(self.game.get_team(self.parent.opposition), self.parent)
         if functions.distance(closest, self.parent) < const.PRESSURE_DISTANCE:
-            print "closest baddie: ", closest
             # change to pass state
             self.pop()
             self.push(self.pass_quaffle)
@@ -159,6 +158,22 @@ class fsm_Chaser(FSM):
     def tackle(self):
         """ Implements the behaviour of getting close to chaser in possession and taking quaffle """
 
+        # if quaffle is free
+        if self.game.quaffle.getPossession() is None:
+            # change state to quaffle_free
+            self.pop()
+            self.push(self.free_quaffle)
+            return
+
+        # if i am no longer the closest chaser
+        my_chasers = self.game.get_team(self.parent).get_group("chaser")
+        closest = functions.groupClosest(my_chasers, self.game.quaffle)
+        if closest != self.parent:
+            # change state to defend
+            self.pop()
+            self.push(self.defend)
+            return
+
         # get the opposition chaser in possession
         opp_chaser = self.game.quaffle.getPossession()
 
@@ -176,20 +191,9 @@ class fsm_Chaser(FSM):
                 self.pop()
                 self.push(self.attack_goal)
                 return
-        # if quaffle is free
-        if self.game.quaffle.getPossession is None:
-            # change state to quaffle_free
-            self.pop()
-            self.push(self.free_quaffle)
-            return
-        # if i am no longer the closest chaser
-        my_chasers = self.game.get_team(self.parent).get_group("chaser")
-        closest = functions.groupClosest(my_chasers, self.game.quaffle)
-        if closest != self.parent:
-            # change state to defend
-            self.pop()
-            self.push(self.defend)
-            return
+            else:
+                self.parent.reset()
+
 
     def pass_quaffle(self):
         """ Implements the behaviour of passing the quaffle to a team chaser """
