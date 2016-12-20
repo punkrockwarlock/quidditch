@@ -48,8 +48,11 @@ class BasePlayer(pygame.sprite.Sprite):
 
         # should be overwritten by inherited classes
         self.max_force = 5
-        self.max_velocity = 20
+        self.max_velocity = 10
         self.mass = 5
+        self.speed = 0
+
+        self.drawBounds = False
 
     def changeHeading(self, direction):
         if self.controller == const.CONTROL_AI:
@@ -121,10 +124,13 @@ class BasePlayer(pygame.sprite.Sprite):
         elif self.acceleration < 0:
             self.acceleration = 0
 
-        self.rect = local.Rect(self.position.x,
-                               self.position.y,
+        local_x = self.position.x - self.game.camera.x
+        local_y = self.position.y - self.game.camera.y
+        self.rect = local.Rect(local_x,
+                               local_y,
                                self.image.get_width(),
                                self.image.get_height())
+        self.drawBounds = False
 
     def _inBounds(self):
         # if x position is more than 0
@@ -170,6 +176,8 @@ class BasePlayer(pygame.sprite.Sprite):
             local_y = self.position.y - self.game.camera.y
             self.game.screen.blit(self.image,
                                   (local_x, local_y))
+            if self.drawBounds:
+                pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 1)
 
 
 class Chaser(BasePlayer):
@@ -177,13 +185,16 @@ class Chaser(BasePlayer):
         BasePlayer.__init__(self, game, team)
         self.type = "chaser"
         self.fsm = FSM.fsm_Chaser(self)
+        self.acceleration = 0.1
 
         # personalised
         self.shoot_distance = 500
-        self.shoot_power = 40
+        self.shoot_power = 30
 
         self.skill_attack = 5
         self.skill_defend = 8
+
+        self.max_speed = self.max_velocity + math.floor(random.random() * 5)
 
     def getShootDist(self):
         return self.shoot_distance
@@ -192,6 +203,10 @@ class Chaser(BasePlayer):
         self._update()
 
         if self.controller == const.CONTROL_AI:
+            if self.speed < self.max_speed:
+                self.speed += self.acceleration
+            else:
+                self.speed = self.max_speed
             self.fsm.update()
 
     def shoot(self):
@@ -204,7 +219,9 @@ class Chaser(BasePlayer):
         self.game.quaffle.throw(vec_between, self.shoot_power)
 
     def tackle(self, oppChaser):
-        if (self.skill_attack + random.random() * 5) > oppChaser.skill_defend:
+        tackle_chance = math.floor((self.skill_attack + random.random() * 4))
+        if tackle_chance > oppChaser.skill_defend:
             return True
         else:
+            print "failed"
             return False

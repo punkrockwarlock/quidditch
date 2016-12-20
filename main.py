@@ -60,7 +60,7 @@ while 1:
     game.clock.tick(const.FPS)
 
     # check for user events
-    functions.eventHandler(player)
+    functions.eventHandler(game)
 
     # update the screen
     game.camera.update()

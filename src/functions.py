@@ -7,7 +7,7 @@ import sys
 
 
 # functions
-def eventHandler(player):
+def eventHandler(game):
     keys = pygame.key.get_pressed()
 
     if keys[local.K_a]:
@@ -32,7 +32,9 @@ def eventHandler(player):
                 sys.exit()
 
             if event.key == local.K_x:
-                print player.fsm.stateStack[len(player.fsm.stateStack) - 1]
+                q = game.quaffle.getPossession()
+                if q is not None:
+                    print q.fsm.stateStack[len(q.fsm.stateStack) - 1]
 
 
 def onMap(sprite):

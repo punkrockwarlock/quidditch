@@ -1,4 +1,6 @@
 import pygame
+import math
+import random
 import pygame.locals as local
 import constants as const
 from Vector import Vec2d
@@ -54,14 +56,15 @@ class Game:
 
     def get_goal(self, player, my_or_opp=1):
         if my_or_opp:
-            return self.goals[player.opposition][0]
+            return self.goals[player.opposition][int(math.floor(random.random() * 3))]
         else:
-            return self.goals[player.team][0]
+            return self.goals[player.team][int(math.floor(random.random() * 3))]
 
     def draw_goals(self):
         for goals in self.goals.values():
             for goal in goals:
                 goal.draw()
+
 
 class Camera:
     def __init__(self):

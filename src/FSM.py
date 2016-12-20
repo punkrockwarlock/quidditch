@@ -31,6 +31,7 @@ class fsm_Chaser(FSM):
         my_chasers = self.game.get_team(self.parent).get_group("chaser")
         closest_chaser = functions.groupClosest(my_chasers,
                                                 self.game.quaffle)
+        self.parent.steerMngr.collisionAvoidance()
 
         # if the chaser is the closest of team chasers then
         if closest_chaser == self.parent:
@@ -102,6 +103,18 @@ class fsm_Chaser(FSM):
             self.push(self.shoot)
             return
 
+        my_chasers = self.game.get_team(self.parent).get_group("chaser")
+        my_chasers.remove(self.parent)
+        closest_tc = functions.groupClosest(my_chasers, self.parent)
+        closest_dist = functions.distance(self.parent, closest_tc)
+        if closest_dist <= const.MAX_PASS_DIST:
+            me_goal_dist = functions.distance(self.parent, self.game.get_goal(self.parent))
+            cl_goal_dist = functions.distance(closest_tc, self.game.get_goal(self.parent))
+            if me_goal_dist > cl_goal_dist:
+                self.pop()
+                self.push(self.pass_quaffle)
+                return
+
         # if no longer in possession
         if self.game.quaffle.getPossession() != self.parent:
             # change to default state
@@ -118,8 +131,12 @@ class fsm_Chaser(FSM):
         # need to implement a follow steering behaviour, and prevent bunching up
         chaserInPossession = self.game.quaffle.getPossession()
         if chaserInPossession is not None:
-            self.parent.steerMngr.seek(chaserInPossession.position)
-
+            if functions.distance(chaserInPossession, self.parent) > const.SUPPORT_DIST:
+                self.parent.steerMngr.seek(chaserInPossession.position)
+            else:
+                oppGoal = self.parent.game.get_goal(self.parent)
+                self.parent.steerMngr.seek(oppGoal.position)
+        self.parent.steerMngr.collisionAvoidance()
 
         # if opposition gets the quaffle
         if self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
@@ -136,10 +153,25 @@ class fsm_Chaser(FSM):
     def defend(self):
         """ Implements behaviour of defending when opposition has possession """
 
+        chaserInPossession = self.game.quaffle.getPossession()
+        if chaserInPossession is not None:
+            my_chasers = self.game.get_team(self.parent).get_group("chaser")
+            closest_chaser = functions.groupClosest(my_chasers,
+                                                    self.game.quaffle)
+            if closest_chaser == self.parent:
+                in_front = (chaserInPossession.position +
+                            (chaserInPossession.velocity.normalized() * const.DEF_IN_FRONT))
+                self.parent.steerMngr.seek(in_front)
+                self.parent.steerMngr.collisionAvoidance()
+            else:
+                self.parent.steerMngr.seek(self.game.get_goal(self.parent, 0).position)
+
+        self.parent.steerMngr.collisionAvoidance()
+
         # follow the closest opposition chaser
-        opp_chasers = self.game.get_team(self.parent.opposition).get_group("chaser")
-        closest = functions.groupClosest(opp_chasers, self.parent)
-        self.parent.steerMngr.seek(closest.position)                # need to implement a follow steering behaviour
+        #opp_chasers = self.game.get_team(self.parent.opposition).get_group("chaser")
+        #closest = functions.groupClosest(opp_chasers, self.parent)
+        #self.parent.steerMngr.seek(closest.position)
 
         # if opposition lose possession
         if not self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
@@ -179,6 +211,7 @@ class fsm_Chaser(FSM):
 
         # fly towards the chaser
         self.parent.steerMngr.seek(opp_chaser.position)
+        self.parent.steerMngr.collisionAvoidance()
 
         # if i am within tackle distance
         if functions.distance(opp_chaser, self.parent) <= const.TACKLE_DIST:
@@ -201,10 +234,11 @@ class fsm_Chaser(FSM):
         # get the closest team chaser
         my_chasers = self.game.get_team(self.parent).get_group("chaser")
         my_chasers.remove(self.parent)
-        closest = functions.groupClosest(my_chasers, self.game.quaffle)
+        closest = functions.groupClosest(my_chasers, self.parent)
 
         # seek towards closest
         self.parent.steerMngr.seek(closest.position)
+        self.parent.steerMngr.collisionAvoidance()
 
         # if i lose possession
         if self.game.quaffle.getPossession() != self.parent:
@@ -227,7 +261,7 @@ class fsm_Chaser(FSM):
             self.parent.pass_to(closest)
             # change state to support
             self.pop()
-            self.push(self.support_attack)
+            self.push(self.post_shoot)
             return
         # else we shouldn't pass to them so
         else:

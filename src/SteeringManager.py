@@ -51,7 +51,7 @@ class SteeringManager:
         self.steering = self.steering / self.host.mass
 
         # velocity += self.steering
-        velocity = functions.truncate(velocity + self.steering, self.host.max_velocity)
+        velocity = functions.truncate(velocity + self.steering, self.host.speed)
 
         self.host.velocity = velocity
         self.host.position += velocity
@@ -65,9 +65,9 @@ class SteeringManager:
         distance = desired.get_length()
 
         if (distance <= slowingRadius):
-            desired = desired.normalized() * self.host.max_velocity * (distance / slowingRadius)
+            desired = desired.normalized() * self.host.max_speed * (distance / slowingRadius)
         else:
-            desired = desired.normalized() * self.host.max_velocity
+            desired = desired.normalized() * self.host.max_speed
 
         force = desired - self.host.velocity
 
