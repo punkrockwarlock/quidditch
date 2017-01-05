@@ -43,7 +43,8 @@ class fsm_Chaser(FSM):
         else:
             # change the state so that they support the chaser that is closest
             self.pop()
-            self.push(self.support_attack)
+            self.push(self.get_quaffle)
+            #self.push(self.support_attack)
             return
 
     def get_quaffle(self):
@@ -256,7 +257,8 @@ class fsm_Chaser(FSM):
                 return
 
         # if the closest is within passing distance
-        if functions.distance(closest, self.parent) <= const.MAX_PASS_DIST:
+        dist = functions.distance(closest, self.parent)
+        if (dist <= const.MAX_PASS_DIST and dist >= const.MIN_PASS_DIST):
             # throw the quaffle in the direction of closest
             self.parent.pass_to(closest)
             # change state to support

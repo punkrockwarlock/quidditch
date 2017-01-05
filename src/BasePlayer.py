@@ -185,7 +185,7 @@ class Chaser(BasePlayer):
         BasePlayer.__init__(self, game, team)
         self.type = "chaser"
         self.fsm = FSM.fsm_Chaser(self)
-        self.acceleration = 0.1
+        self.acceleration = 0.01
 
         # personalised
         self.shoot_distance = 500
@@ -223,5 +223,4 @@ class Chaser(BasePlayer):
         if tackle_chance > oppChaser.skill_defend:
             return True
         else:
-            print "failed"
             return False

@@ -1,6 +1,7 @@
 from Vector import Vec2d
 import functions
 import random
+import constants as const
 
 
 class SteeringManager:
@@ -29,6 +30,23 @@ class SteeringManager:
             avoidance *= self.host.max_force
         self.steering += avoidance
 
+    def separation(self):
+        v = Vec2d(0, 0)
+        neighborCount = 0
+
+        for agent in self.game.get_team(self.host):
+            if (functions.distance(agent, self.host) < const.SEPARATION_DIST):
+                v.x += agent.position.x - self.host.position.x
+                v.y += agent.position.y - self.host.position.y
+                neighborCount += 1
+
+        v.x /= neighborCount
+        v.y /= neighborCount
+        v = Vec2d(v.x - self.host.position.x, v.y - self.host.position.y)
+        v = v.normalized()
+        v *= -1
+        return v
+
     def seek(self, target, slowingRadius=1):
         self.steering += self.doSeek(target, slowingRadius)
 
@@ -45,8 +63,10 @@ class SteeringManager:
         self.steering += self.doPursuit(target)
 
     def update(self):
+        sep = self.separation() * 5
         velocity = self.host.velocity
 
+        self.steering += sep
         self.steering = functions.truncate(self.steering, self.host.max_force)
         self.steering = self.steering / self.host.mass
 

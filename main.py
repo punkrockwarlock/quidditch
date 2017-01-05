@@ -42,9 +42,9 @@ quaffle = Balls.Quaffle(game)
 quaffle.position = Vec2d(200, 200)
 game.quaffle = quaffle
 
-game.add_goal(classes.Goal(game, Vec2d(100, 500)), "player_controlled")
-game.add_goal(classes.Goal(game, Vec2d(100, 600)), "player_controlled")
-game.add_goal(classes.Goal(game, Vec2d(100, 700)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(1100, 500)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(1100, 600)), "player_controlled")
+game.add_goal(classes.Goal(game, Vec2d(1100, 700)), "player_controlled")
 game.add_goal(classes.Goal(game, Vec2d(4892, 500)), "ai_controlled")
 game.add_goal(classes.Goal(game, Vec2d(4892, 600)), "ai_controlled")
 game.add_goal(classes.Goal(game, Vec2d(4892, 700)), "ai_controlled")
