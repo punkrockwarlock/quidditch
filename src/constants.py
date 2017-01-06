@@ -9,7 +9,7 @@ FPS = 40
 STATUS = "TEST"
 
 # environment constants
-GRAVITY = 0.05
+GRAVITY = 0.8
 
 # used to control ground creation
 GRND_BLOCK_W = 64
@@ -25,9 +25,9 @@ CONTROL_AI = 2
 SEPARATION_DIST = 300
 
 # used in chaser_fsm
-DAMPING = 0.1
+DAMPING = 0.3
 GRAB_DISTANCE = 101
-PRESSURE_DISTANCE = 100
+PRESSURE_DISTANCE = 80
 MAX_PASS_DIST = 600
 MIN_PASS_DIST = 200
 SUPPORT_DIST = MAX_PASS_DIST - 100

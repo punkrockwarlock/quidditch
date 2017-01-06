@@ -71,11 +71,10 @@ class Quaffle(Ball):
         else:
             self.position += self.velocity.normalized() * self.acceleration
 
-        if self.acceleration > 0:
+        if self.acceleration > 1:
             self.acceleration = self.acceleration - const.DAMPING
-        elif self.acceleration < 0:
-            self.acceleration = 0
-
+        elif self.acceleration < 1:
+            self.acceleration = 1
 
     def draw(self):
         if self.game.camera.onScreen(self):
