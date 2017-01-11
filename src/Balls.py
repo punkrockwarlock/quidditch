@@ -20,8 +20,10 @@ class Ball(pygame.sprite.Sprite):
 
     def _update(self):
         self._inBounds()
-        self.rect = pygame.Rect(self.position.x,
-                                self.position.y,
+        local_x = self.position.x - self.game.camera.x
+        local_y = self.position.y - self.game.camera.y
+        self.rect = pygame.Rect(local_x,
+                                local_y,
                                 self.image.get_width(),
                                 self.image.get_height())
 

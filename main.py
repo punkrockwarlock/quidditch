@@ -21,18 +21,13 @@ game = classes.Game()
 background = classes.Background(game)
 ground = classes.Ground(game)
 
-player = BasePlayer.Chaser(game, "ai_controlled")
-player.position.x = 200
-player3 = BasePlayer.Chaser(game, "ai_controlled")
-player3.position.x = 400
-
-player_team = classes.Team("ai_controlled")
-player_team.add(player)
+player_team = classes.Team("player_controlled")
+player_team.add(BasePlayer.Chaser(game, player_team.type))
 player_team.add(BasePlayer.Chaser(game, player_team.type))
 player_team.add(BasePlayer.Chaser(game, player_team.type))
 game.add_team(player_team)
 
-opposition_team = classes.Team("player_controlled")
+opposition_team = classes.Team("ai_controlled")
 opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
 opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
 opposition_team.add(BasePlayer.Chaser(game, opposition_team.type))
@@ -49,7 +44,8 @@ game.add_goal(classes.Goal(game, Vec2d(4892, 500)), "ai_controlled")
 game.add_goal(classes.Goal(game, Vec2d(4892, 600)), "ai_controlled")
 game.add_goal(classes.Goal(game, Vec2d(4892, 700)), "ai_controlled")
 
-game.camera.track = quaffle
+player = player_team.set_first_control()
+game.camera.track = player
 
 while 1:
     # fill the screen with black
@@ -60,7 +56,7 @@ while 1:
     game.clock.tick(const.FPS)
 
     # check for user events
-    functions.eventHandler(game)
+    functions.eventHandler(game, player)
 
     # update the screen
     game.camera.update()

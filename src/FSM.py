@@ -59,12 +59,13 @@ class fsm_Chaser(FSM):
         # if I am close enough to the quaffle to grab it
         if functions.distance(self.game.quaffle, self.parent) <= const.GRAB_DISTANCE:
             # and the quaffle is not is possession
-            if self.game.quaffle.getPossession() is None:
-                # grab the quaffle and change state to attack
-                self.game.quaffle.setPossession(self.parent)
-                self.pop()
-                self.push(self.attack_goal)
-                return
+            if functions.pixel_collide(self.game.quaffle, self.parent):
+                if self.game.quaffle.getPossession() is None:
+                    # grab the quaffle and change state to attack
+                    self.game.quaffle.setPossession(self.parent)
+                    self.pop()
+                    self.push(self.attack_goal)
+                    return
         # if the opponent gets the quaffle first
         if self.game.get_team(self.parent.opposition).has(self.game.quaffle.getPossession()):
             self.pop()

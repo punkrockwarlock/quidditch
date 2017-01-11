@@ -168,6 +168,11 @@ class Team(pygame.sprite.Group):
         else:
             raise KeyError("Could not find the position in team")
 
+    def set_first_control(self):
+        temp = self._findPlayer("chaser")
+        temp.controller = const.CONTROL_USER
+        return temp
+
     def get_group(self, group_name):
         theGroup = []
         if group_name in ("chaser", "beater"):

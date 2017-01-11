@@ -59,30 +59,31 @@ class BasePlayer(pygame.sprite.Sprite):
             return
 
         if direction == "left":
-            vec = Vec2d(-1, 0)
-            self.acceleration += 0.4
+            vec = Vec2d(-0.1, 0)
         elif direction == "right":
-            vec = Vec2d(1, 0)
-            self.acceleration += 0.4
+            vec = Vec2d(0.1, 0)
         elif direction == "up":
-            vec = Vec2d(0, -1)
-            self.acceleration += 0.1
+            vec = Vec2d(0, -0.1)
         elif direction == "down":
-            vec = Vec2d(0, 1)
-            self.acceleration += 0.2
+            vec = Vec2d(0, 0.1)
+        self.acceleration += 0.4
+
+        if self.acceleration > self.max_speed:
+            self.acceleration = self.max_speed
+        elif self.acceleration < 0:
+            self.acceleration = 0
 
         if (vec.x < 0 and self.pointing == 1):
-            if self.acceleration > 0:
-                self.acceleration = self.acceleration - 0.4
-            elif self.acceleration < 0:
-                self.acceleration = 0
+            self.acceleration -= 0.2
+            if self.acceleration <= 0:
+                self.velocity.x *= -1
         elif (vec.x > 0 and self.pointing == -1):
-            if self.acceleration > 0:
-                self.acceleration = self.acceleration - 0.4
-            elif self.acceleration < 0:
-                self.acceleration = 0
+            self.acceleration -= 0.2
+            if self.acceleration <= 0:
+                self.velocity.x *= -1
 
         self.velocity += vec
+        self.velocity = self.velocity.normalized()
 
     def rotateToHeading(self):
         if self.velocity.x >= 0:
@@ -111,18 +112,15 @@ class BasePlayer(pygame.sprite.Sprite):
         # this will run if controlled by AI
         if self.controller == const.CONTROL_AI:
             self.steerMngr.update()
+            if self.acceleration > 0:
+                self.acceleration = self.acceleration - const.DAMPING
+            elif self.acceleration < 0:
+                self.acceleration = 0
 
         if self.controller == const.CONTROL_USER:
-            pass
-            #self.position += functions.truncate((self.velocity.normalized() *
-                                                #self.acceleration),
-                                                #self.max_velocity)
-
-        # slow down acceleration and make sure it isn't < 0
-        if self.acceleration > 0:
-            self.acceleration = self.acceleration - const.DAMPING
-        elif self.acceleration < 0:
-            self.acceleration = 0
+            self.position += functions.truncate((self.velocity.normalized() *
+                                                self.acceleration),
+                                                self.max_speed)
 
         local_x = self.position.x - self.game.camera.x
         local_y = self.position.y - self.game.camera.y
@@ -161,8 +159,8 @@ class BasePlayer(pygame.sprite.Sprite):
         self._inBounds()
         player_collided = self._playerCollisions()
         if player_collided:
-            self.reset()
-            self.velocity = (player_collided.position - self.position) * -1
+            #self.reset()
+            #self.velocity = (player_collided.position - self.position) * -1
             self.acceleration = 2
 
     def reset(self):
@@ -209,6 +207,14 @@ class Chaser(BasePlayer):
                 self.speed = self.max_speed
             self.fsm.update()
 
+        if self.controller == const.CONTROL_USER:
+            self.checkQuaffle()
+
+    def checkQuaffle(self):
+        if self.game.quaffle.getPossession() is None:
+            if functions.pixel_collide(self.game.quaffle, self):
+                self.game.quaffle.setPossession(self)
+
     def shoot(self):
         oppGoal = self.game.get_goal(self)
         vec_between = (oppGoal.position - self.position).normalized()
@@ -217,6 +223,15 @@ class Chaser(BasePlayer):
     def pass_to(self, other):
         vec_between = (other.position - self.position).normalized()
         self.game.quaffle.throw(vec_between, self.shoot_power)
+
+    def pass_quaffle(self):
+        if self.pointing == 1:
+            self.game.quaffle.position.x = self.position.x + self.start_image.get_width()
+        self.game.quaffle.throw(self.velocity, self.shoot_power)
+
+    def player_tackle(self):
+        if functions.distance(self.game.quaffle, self) < const.TACKLE_DIST:
+            self.game.quaffle.setPossession(self)
 
     def tackle(self, oppChaser):
         tackle_chance = math.floor((self.skill_attack + random.random() * 4))

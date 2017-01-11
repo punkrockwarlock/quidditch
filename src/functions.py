@@ -7,20 +7,26 @@ import sys
 
 
 # functions
-def eventHandler(game):
+def eventHandler(game, player):
     keys = pygame.key.get_pressed()
 
-    if keys[local.K_a]:
+    if keys[local.K_LEFT]:
         player.changeHeading("left")
 
-    if keys[local.K_d]:
+    if keys[local.K_RIGHT]:
         player.changeHeading("right")
 
-    if keys[local.K_w]:
+    if keys[local.K_UP]:
         player.changeHeading("up")
 
-    if keys[local.K_s]:
+    if keys[local.K_DOWN]:
         player.changeHeading("down")
+
+    if keys[local.K_s]:
+        player.pass_quaffle()
+
+    if keys[local.K_d]:
+        player.player_tackle()
 
     for event in pygame.event.get():
         if event.type == local.QUIT:
